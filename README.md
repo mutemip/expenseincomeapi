@@ -14,5 +14,5 @@
     - install system requirements using this command: pip install -r requirements.txt
     - Then runserver
 
-
+Some Front-end coming soon. Thank you
 
