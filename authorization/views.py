@@ -1,4 +1,5 @@
 from rest_framework import generics, status, views
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.sites.shortcuts import get_current_site
@@ -17,7 +18,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from .serializers import (RegisterViewSerializer, EmailVerificationSerializer, LoginAPIViewSerializer,
-                          RequestPasswordResetAPIViewSerializer, SetNewPasswordAPIViewSerializer)
+                          RequestPasswordResetAPIViewSerializer, SetNewPasswordAPIViewSerializer, LogoutAPIViewSerializer)
 from .models import User
 from .utils import Util
 from .renderers import UserRenderer
@@ -136,3 +137,14 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'success': True, 'message': 'Password reset successful'}, status=status.HTTP_200_OK)
+
+class LogoutAPIView(generics.GenericAPIView):
+    serializer_class = LogoutAPIViewSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
